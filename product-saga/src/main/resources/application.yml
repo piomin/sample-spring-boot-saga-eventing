@@ -1,0 +1,16 @@
+spring.application.name: product-saga
+spring.cloud.function.web.path: /products
+spring.cloud.stream.bindings.orderEventSupplier-out-0.destination: reserve-events
+#spring.cloud.stream.bindings.customer-saga.orderEventSupplier-out-0.destination: reserve-events
+spring.kafka.bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+spring.cloud.function.definition: orderEventSupplier
+
+spring:
+  jpa:
+    database-platform: H2
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop
+
+#logging.level.org.springframework.kafka: DEBUG
+#logging.level.org.apache.kafka: DEBUG

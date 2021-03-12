@@ -1,0 +1,42 @@
+apiVersion: eventing.knative.dev/v1
+kind: Broker
+metadata:
+  annotations:
+    eventing.knative.dev/broker.class: MTChannelBasedBroker
+  name: default
+spec:
+  config:
+    apiVersion: v1
+    kind: ConfigMap
+    name: config-br-default-channel
+    namespace: knative-eventing
+---
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: customer-saga-trigger
+spec:
+  broker: default
+  filter:
+    attributes:
+      type: dev.knative.sources.ping
+  subscriber:
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: customer-saga
+    uri: /customers/reserve
+---
+apiVersion: sources.knative.dev/v1alpha2
+kind: PingSource
+metadata:
+  name: test-ping-source
+spec:
+  schedule: "*/1 * * * *"
+  jsonData: '{"id":1,"customerId":1,"amount":100}'
+  sink:
+    ref:
+      apiVersion: eventing.knative.dev/v1
+      kind: Broker
+      name: default
+      namespace: knative-eventing

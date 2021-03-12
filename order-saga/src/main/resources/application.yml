@@ -1,0 +1,15 @@
+spring.application.name: order-saga
+spring.cloud.function.web.path: /orders
+spring.cloud.stream.bindings.orderEventSupplier-out-0.destination: order-events
+#spring.cloud.stream.bindings.order-saga.orderEventSupplier-out-0.destination: order-events
+spring.cloud.stream.bindings.orderConfirmSupplier-out-0.destination: order-events
+#spring.cloud.stream.bindings.order-saga.orderConfirmSupplier-out-0.destination: order-events
+spring.kafka.bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+spring.cloud.function.definition: orderEventSupplier;orderConfirmSupplier
+
+spring:
+  jpa:
+    database-platform: H2
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop

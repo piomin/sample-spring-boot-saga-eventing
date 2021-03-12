@@ -1,0 +1,4 @@
+# Project exclude paths
+/customer-saga/target/
+/order-saga/target/
+/product-saga/target/

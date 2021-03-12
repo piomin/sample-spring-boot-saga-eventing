@@ -1,0 +1,41 @@
+apiVersion: bindings.knative.dev/v1beta1
+kind: KafkaBinding
+metadata:
+  name: kafka-binding-test
+  namespace: serverless
+spec:
+  subject:
+    apiVersion: batch/v1
+    kind: Job
+    selector:
+      matchLabels:
+        kafka.topic: "reserve-events"
+  bootstrapServers:
+    - my-cluster-kafka-bootstrap.kafka:9092
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    kafka.topic: "reserve-events"
+  name: kafka-publisher-job
+  namespace: serverless
+spec:
+  backoffLimit: 1
+  completions: 1
+  parallelism: 1
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - image: docker.io/murugappans/kafka-publisher-1974f83e2ff7c8994707b5e8731528e8@sha256:fd79490514053c643617dc72a43097251fed139c966fd5d131134a0e424882de
+          env:
+            - name: KAFKA_TOPIC
+              value: "reserve-events"
+            - name: KAFKA_KEY
+              value: "0"
+            - name: KAFKA_HEADERS
+              value: "content-type:application/json"
+            - name: KAFKA_VALUE
+              value: '{"id":1,"customerId":1,"amount":100}'
+          name: kafka-publisher

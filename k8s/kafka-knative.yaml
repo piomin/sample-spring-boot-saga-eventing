@@ -1,0 +1,86 @@
+#apiVersion: kafka.strimzi.io/v1beta1
+#kind: KafkaTopic
+#metadata:
+#  name: knative-demo-topic
+#  namespace: kafka
+#  labels:
+#    strimzi.io/cluster: my-cluster
+#spec:
+#  partitions: 3
+#  replicas: 1
+#  config:
+#    retention.ms: 7200000
+#    segment.bytes: 1073741824
+#---
+apiVersion: eventing.knative.dev/v1
+kind: Broker
+metadata:
+  annotations:
+    eventing.knative.dev/broker.class: Kafka
+  name: default
+  namespace: serverless
+spec:
+  config:
+    apiVersion: v1
+    kind: ConfigMap
+    name: kafka-broker-config
+    namespace: knative-eventing
+---
+apiVersion: sources.knative.dev/v1beta1
+kind: KafkaSource
+metadata:
+  name: kafka-source
+  namespace: serverless
+spec:
+  bootstrapServers:
+    - my-cluster-kafka-bootstrap.kafka:9092
+  topics:
+    - order-events
+  sink:
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: customer-saga
+    uri: /customers/reserve
+---
+apiVersion: bindings.knative.dev/v1beta1
+kind: KafkaBinding
+metadata:
+  name: kafka-binding-test
+  namespace: serverless
+spec:
+  subject:
+    apiVersion: batch/v1
+    kind: Job
+    selector:
+      matchLabels:
+        kafka.topic: "order-events"
+  bootstrapServers:
+    - my-cluster-kafka-bootstrap.kafka:9092
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    kafka.topic: "order-events"
+  name: kafka-publisher-job
+  namespace: serverless
+spec:
+  backoffLimit: 1
+  completions: 1
+  parallelism: 1
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - image: docker.io/murugappans/kafka-publisher-1974f83e2ff7c8994707b5e8731528e8@sha256:fd79490514053c643617dc72a43097251fed139c966fd5d131134a0e424882de
+          env:
+            - name: KAFKA_TOPIC
+              value: "order-events"
+            - name: KAFKA_KEY
+              value: "0"
+            - name: KAFKA_HEADERS
+              value: "content-type:application/json"
+            - name: KAFKA_VALUE
+              value: '{"id":1,"customerId":1,"amount":100}'
+          name: kafka-publisher

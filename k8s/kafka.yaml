@@ -1,0 +1,75 @@
+#apiVersion: kafka.strimzi.io/v1beta1
+#kind: Kafka
+#metadata:
+#  name: my-cluster
+#spec:
+#  kafka:
+#    version: 2.4.0
+#    replicas: 1
+#    listeners:
+#      plain: {}
+#      tls: {}
+#    config:
+#      offsets.topic.replication.factor: 1
+#      transaction.state.log.replication.factor: 1
+#      transaction.state.log.min.isr: 1
+#      log.message.format.version: "2.4"
+#    storage:
+#      type: ephemeral
+#  zookeeper:
+#    replicas: 3
+#    storage:
+#      type: ephemeral
+#  entityOperator:
+#    topicOperator: {}
+#    userOperator: {}
+#---
+#apiVersion: eventing.knative.dev/v1
+#kind: Broker
+#metadata:
+#  annotations:
+#    eventing.knative.dev/broker.class: Kafka
+#  name: default
+#  namespace: serverless
+#spec:
+#  config:
+#    apiVersion: v1
+#    kind: ConfigMap
+#    name: kafka-broker-config
+#    namespace: knative-eventing
+#---
+apiVersion: bindings.knative.dev/v1beta1
+kind: KafkaBinding
+metadata:
+  name: kafka-binding-product-saga
+spec:
+  subject:
+    apiVersion: serving.knative.dev/v1
+    kind: Service
+    name: product-saga
+  bootstrapServers:
+    - my-cluster-kafka-bootstrap.kafka:9092
+#---
+#apiVersion: bindings.knative.dev/v1beta1
+#kind: KafkaBinding
+#metadata:
+#  name: kafka-binding-customer-saga
+#spec:
+#  subject:
+#    apiVersion: serving.knative.dev/v1
+#    kind: Service
+#    name: customer-saga
+#  bootstrapServers:
+#    - my-cluster-kafka-bootstrap.kafka:9092
+#---
+#apiVersion: bindings.knative.dev/v1beta1
+#kind: KafkaBinding
+#metadata:
+#  name: kafka-binding-order-saga
+#spec:
+#  subject:
+#    apiVersion: serving.knative.dev/v1
+#    kind: Service
+#    name: order-saga
+#  bootstrapServers:
+#    - my-cluster-kafka-bootstrap.kafka:9092

@@ -1,0 +1,10 @@
+insert into product(id, name, available_items, reserved_items) values (1, 'Test1', 1000, 0);
+insert into product(id, name, available_items, reserved_items) values (2, 'Test2', 100, 0);
+insert into product(id, name, available_items, reserved_items) values (3, 'Test3', 500, 0);
+insert into product(id, name, available_items, reserved_items) values (4, 'Test4', 200, 0);
+insert into product(id, name, available_items, reserved_items) values (5, 'Test5', 1000, 0);
+insert into product(id, name, available_items, reserved_items) values (6, 'Test6', 100, 0);
+insert into product(id, name, available_items, reserved_items) values (7, 'Test7', 100, 0);
+insert into product(id, name, available_items, reserved_items) values (8, 'Test8', 200, 0);
+insert into product(id, name, available_items, reserved_items) values (9, 'Test9', 300, 0);
+insert into product(id, name, available_items, reserved_items) values (10, 'Test10', 500, 0);
