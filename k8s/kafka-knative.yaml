@@ -1,17 +1,3 @@
-#apiVersion: kafka.strimzi.io/v1beta1
-#kind: KafkaTopic
-#metadata:
-#  name: knative-demo-topic
-#  namespace: kafka
-#  labels:
-#    strimzi.io/cluster: my-cluster
-#spec:
-#  partitions: 3
-#  replicas: 1
-#  config:
-#    retention.ms: 7200000
-#    segment.bytes: 1073741824
-#---
 apiVersion: eventing.knative.dev/v1
 kind: Broker
 metadata:
