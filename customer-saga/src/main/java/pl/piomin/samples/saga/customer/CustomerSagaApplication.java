@@ -54,6 +54,7 @@ public class CustomerSagaApplication {
             customer.setAmountAvailable(customer.getAmountAvailable() - order.getAmount());
             order.setStatus(OrderStatus.IN_PROGRESS);
             queue.offer(order);
+            log.info("Reserved: {}", customer);
         } else if (order.getStatus() == OrderStatus.CONFIRMED) {
             customer.setAmountReserved(customer.getAmountReserved() - order.getAmount());
         }
