@@ -1,0 +1,1 @@
+insert into orders(id, customer_id, product_id, amount, product_count, status) values (1, 1, 1, 1000, 10, 0);

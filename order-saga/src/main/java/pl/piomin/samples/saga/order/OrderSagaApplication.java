@@ -4,18 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.function.cloudevent.CloudEventMessageBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.messaging.Message;
 import pl.piomin.samples.saga.order.model.Order;
 import pl.piomin.samples.saga.order.model.OrderStatus;
 import pl.piomin.samples.saga.order.repository.OrderRepository;
 
-import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 @SpringBootApplication
@@ -26,7 +23,7 @@ public class OrderSagaApplication {
         SpringApplication.run(OrderSagaApplication.class, args);
     }
 
-    private static int num = 0;
+    private static int num = 1;
     private BlockingQueue<Order> queue = new LinkedBlockingQueue<>();
 
     @Bean
