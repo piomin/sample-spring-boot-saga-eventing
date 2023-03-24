@@ -22,8 +22,8 @@
     <packaging>pom</packaging>
 
     <properties>
-        <java.version>11</java.version>
-        <spring-cloud.version>2020.0.1</spring-cloud.version>
+        <java.version>17</java.version>
+        <spring-cloud.version>2022.0.1</spring-cloud.version>
         <lombok.version>1.18.26</lombok.version>
         <sonar.projectKey>piomin_sample-spring-boot-saga-eventing</sonar.projectKey>
         <sonar.organization>piomin</sonar.organization>
