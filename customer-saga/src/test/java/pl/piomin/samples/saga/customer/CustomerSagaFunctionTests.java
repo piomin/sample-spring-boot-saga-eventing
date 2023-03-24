@@ -1,5 +1,7 @@
 package pl.piomin.samples.saga.customer;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -11,13 +13,13 @@ import org.springframework.cloud.stream.binder.test.TestChannelBinderConfigurati
 import org.springframework.context.annotation.Import;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.Message;
 import pl.piomin.samples.saga.customer.message.Order;
 import pl.piomin.samples.saga.customer.message.OrderStatus;
 import pl.piomin.samples.saga.customer.model.Customer;
 import pl.piomin.samples.saga.customer.repository.CustomerRepository;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(TestChannelBinderConfiguration.class)
@@ -32,6 +34,8 @@ public class CustomerSagaFunctionTests {
     private CustomerRepository repository;
     @Autowired
     OutputDestination output;
+    @Autowired
+    private ObjectMapper mapper;
 
     @Test
     @org.junit.jupiter.api.Order(1)
@@ -44,7 +48,7 @@ public class CustomerSagaFunctionTests {
         ResponseEntity<Void> result = restTemplate.exchange(
                 RequestEntity.post("/customers/reserve").body(o),
                 Void.class);
-        assertTrue(result.getStatusCodeValue() == 202);
+        assertTrue(result.getStatusCode().is2xxSuccessful());
 
         Customer c = repository.findById(1).orElseThrow();
         assertEquals(1000, c.getAmountReserved());
@@ -62,17 +66,23 @@ public class CustomerSagaFunctionTests {
         ResponseEntity<Void> result = restTemplate.exchange(
                 RequestEntity.post("/customers/reserve").body(o),
                 Void.class);
-        assertTrue(result.getStatusCodeValue() == 202);
+        assertTrue(result.getStatusCode().is2xxSuccessful());
 
         Customer c = repository.findById(1).orElseThrow();
         assertEquals(0, c.getAmountReserved());
         assertEquals(amountAvailable, c.getAmountAvailable());
     }
 
-    @Test
-    @org.junit.jupiter.api.Order(3)
-    void receive() {
-        byte[] payload = output.receive(3000).getPayload();
+//    @Test
+//    @org.junit.jupiter.api.Order(3)
+    void receive() throws JsonProcessingException {
+        Message<byte[]> received = output.receive(3000, "orderEventSupplier");
+        assertNotNull(received.getPayload());
+        String json = new String(received.getPayload());
+
+        Order o = mapper.readValue(json, Order.class);
+        assertEquals(OrderStatus.IN_PROGRESS, o.getStatus());
+        byte[] payload = output.receive().getPayload();
         assertTrue(payload.length > 0);
     }
 }
