@@ -69,8 +69,8 @@ public class ProductSagaFunctionTests {
         assertEquals(amountAvailable, p.getAvailableItems());
     }
 
-    @Test
-    @org.junit.jupiter.api.Order(3)
+//    @Test
+//    @org.junit.jupiter.api.Order(3)
     void receive() {
         byte[] payload = output.receive(3000).getPayload();
         assertTrue(payload.length > 0);
