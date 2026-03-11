@@ -1,7 +1,5 @@
 package pl.piomin.samples.saga.customer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -19,6 +17,7 @@ import pl.piomin.samples.saga.customer.message.Order;
 import pl.piomin.samples.saga.customer.message.OrderStatus;
 import pl.piomin.samples.saga.customer.model.Customer;
 import pl.piomin.samples.saga.customer.repository.CustomerRepository;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -77,7 +76,7 @@ public class CustomerSagaFunctionTests {
 
 //    @Test
 //    @org.junit.jupiter.api.Order(3)
-    void receive() throws JsonProcessingException {
+    void receive() {
         Message<byte[]> received = output.receive(3000, "orderEventSupplier");
         assertNotNull(received.getPayload());
         String json = new String(received.getPayload());
