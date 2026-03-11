@@ -1,13 +1,12 @@
 package pl.piomin.samples.saga.customer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.resttestclient.TestRestTemplate;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.cloud.stream.binder.test.OutputDestination;
 import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration;
 import org.springframework.context.annotation.Import;
@@ -18,12 +17,14 @@ import pl.piomin.samples.saga.customer.message.Order;
 import pl.piomin.samples.saga.customer.message.OrderStatus;
 import pl.piomin.samples.saga.customer.model.Customer;
 import pl.piomin.samples.saga.customer.repository.CustomerRepository;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(TestChannelBinderConfiguration.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@AutoConfigureTestRestTemplate
 public class CustomerSagaFunctionTests {
 
     private static int amountAvailable;
@@ -75,7 +76,7 @@ public class CustomerSagaFunctionTests {
 
 //    @Test
 //    @org.junit.jupiter.api.Order(3)
-    void receive() throws JsonProcessingException {
+    void receive() {
         Message<byte[]> received = output.receive(3000, "orderEventSupplier");
         assertNotNull(received.getPayload());
         String json = new String(received.getPayload());

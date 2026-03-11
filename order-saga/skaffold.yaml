@@ -1,10 +1,13 @@
-apiVersion: skaffold/v1
+apiVersion: skaffold/v4beta13
 kind: Config
+metadata:
+  name: order-saga
 build:
   artifacts:
   - image: dev.local/order-saga
     jib: {}
+manifests:
+  rawYaml:
+    - k8s/ksvc.yaml
 deploy:
-  kubectl:
-    manifests:
-      - k8s/ksvc.yaml
+  kubectl: {}

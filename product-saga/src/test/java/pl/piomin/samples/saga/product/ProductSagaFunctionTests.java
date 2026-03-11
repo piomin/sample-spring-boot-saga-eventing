@@ -4,8 +4,9 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.resttestclient.TestRestTemplate;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.cloud.stream.binder.test.OutputDestination;
 import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration;
 import org.springframework.context.annotation.Import;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(TestChannelBinderConfiguration.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@AutoConfigureTestRestTemplate
 public class ProductSagaFunctionTests {
 
     private static int amountAvailable;
@@ -44,7 +46,7 @@ public class ProductSagaFunctionTests {
         ResponseEntity<Void> result = restTemplate.exchange(
                 RequestEntity.post("/products/reserve").body(o),
                 Void.class);
-        assertTrue(result.getStatusCodeValue() == 202);
+        assertTrue(result.getStatusCode().value() == 202);
 
         Product p = repository.findById(1).orElseThrow();
         assertEquals(10, p.getReservedItems());
@@ -62,7 +64,7 @@ public class ProductSagaFunctionTests {
         ResponseEntity<Void> result = restTemplate.exchange(
                 RequestEntity.post("/products/reserve").body(o),
                 Void.class);
-        assertTrue(result.getStatusCodeValue() == 202);
+        assertTrue(result.getStatusCode().value() == 202);
 
         Product p = repository.findById(1).orElseThrow();
         assertEquals(0, p.getReservedItems());
