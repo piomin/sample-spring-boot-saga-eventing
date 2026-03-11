@@ -7,8 +7,7 @@ build:
   - image: dev.local/order-saga
     jib: {}
 manifests:
-  kustomize:
-    paths:
-    - k8s
+  rawYaml:
+    - k8s/ksvc.yaml
 deploy:
   kubectl: {}
