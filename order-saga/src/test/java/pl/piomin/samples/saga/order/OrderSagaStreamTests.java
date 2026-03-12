@@ -18,7 +18,7 @@ public class OrderSagaStreamTests {
 
     @Test
     void receive() {
-        byte[] payload = output.receive().getPayload();
+        byte[] payload = output.receive(2000).getPayload();
         assertTrue(payload.length > 0);
     }
 }
